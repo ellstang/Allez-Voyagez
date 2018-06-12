@@ -1,0 +1,6 @@
+framework module Pods_allezVoyagez {
+  umbrella header "Pods-allezVoyagez-umbrella.h"
+
+  export *
+  module * { export * }
+}
