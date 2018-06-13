@@ -53,6 +53,8 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
     collectionView?.dataSource = self
     collectionView?.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
     
+    registerForPreviewing(with: self, sourceView: collectionView!)
+    
     configureLocation()
     addDoubleTap()
   }
@@ -203,7 +205,7 @@ extension MapVC: MKMapViewDelegate {
   
   func retrieveURL(forAnnotation annotation: DroppablePin, handler: @escaping (_ status: Bool) ->()) {
     
-    Alamofire.request(returnFlickrURL(forAPIKey: flickrAPIKey, withAnnotation: annotation, NumberOfPhoto: 12)).responseJSON { (response) in
+    Alamofire.request(returnFlickrURL(forAPIKey: flickrAPIKey, withAnnotation: annotation, NumberOfPhoto: 30)).responseJSON { (response) in
       print("response is \(response)")
       guard let json = response.result.value as? Dictionary<String, AnyObject> else { return }
       let photoDict = json["photos"] as! Dictionary<String, AnyObject>
@@ -224,7 +226,8 @@ extension MapVC: MKMapViewDelegate {
           print(responseImage, "===========", responseImage.result,"===========", responseImage.result.value)
           guard let image = responseImage.result.value else { return }
           self.imageArray.append(image)
-          self.progressLabel?.text = "\(self.imageArray.count)/12 images are downloading"
+          self.progressLabel?.text = "\(self.imageArray.count)/30 images are downloading"
+          self.progressLabel?.adjustsFontSizeToFitWidth = true
           
           //tells us if all image downloading tasks are done
           if self.photoURLArray.count == self.imageArray.count {
@@ -272,7 +275,7 @@ extension MapVC: UICollectionViewDelegate, UICollectionViewDataSource {
     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? PhotoCell else { return UICollectionViewCell() }
     cell.frame.size = CGSize(width: 70, height: 70)
     let imageView = UIImageView(image: imageArray[indexPath.row])
-    imageView.contentMode = .scaleAspectFit
+    imageView.contentMode = .scaleAspectFill
     cell.addSubview(imageView)
     cell.contentView.backgroundColor = #colorLiteral(red: 0.9921568627, green: 0.7647058824, blue: 0.2549019608, alpha: 1)
     
@@ -290,12 +293,19 @@ extension MapVC: UICollectionViewDelegate, UICollectionViewDataSource {
 
 extension MapVC: UIViewControllerPreviewingDelegate {
   func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
+    guard let pressedIndexPath = collectionView?.indexPathForItem(at: location), let cell = collectionView?.cellForItem(at: pressedIndexPath) else { return nil }
+    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+    guard let popVC = storyboard.instantiateViewController(withIdentifier: "PopVC") as? PopVC else { return nil }
+    popVC.initImage(forImage: imageArray[pressedIndexPath.row])
+    previewingContext.sourceRect = cell.contentView.frame
     
+    
+    return popVC
   }
-  
+
   func previewingContext(_ previewingContext: UIViewControllerPreviewing, commit viewControllerToCommit: UIViewController) {
-    
+    show(viewControllerToCommit, sender: self)
   }
-  
+
   
 }
