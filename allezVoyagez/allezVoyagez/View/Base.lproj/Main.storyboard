@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Bq5-rR-C4u">
     <device id="retina4_0" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -10,7 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--MapVC-->
+        <!--Double Tap to Drop A Pin-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="MapVC" customModule="allezVoyagez" customModuleProvider="target" sceneMemberID="viewController">
@@ -18,27 +18,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" zoomEnabled="NO" rotateEnabled="NO" pitchEnabled="NO" showsUserLocation="YES" showsCompass="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1TJ-W8-nhD" customClass="MyMapView">
-                                <rect key="frame" x="0.0" y="20" width="320" height="547"/>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" zoomEnabled="NO" rotateEnabled="NO" pitchEnabled="NO" showsUserLocation="YES" showsCompass="NO" showsScale="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1TJ-W8-nhD" customClass="MyMapView">
+                                <rect key="frame" x="0.0" y="64" width="320" height="503"/>
                             </mapView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="349-nu-WM4">
-                                <rect key="frame" x="0.0" y="20" width="320" height="70"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Double Tap to Drop A Pin" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0iK-nP-OYS">
-                                        <rect key="frame" x="71" y="24" width="247" height="24"/>
-                                        <fontDescription key="fontDescription" name="EuphemiaUCAS-Bold" family="Euphemia UCAS" pointSize="18"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
-                                <color key="backgroundColor" red="0.25098039215686274" green="0.83921568627450982" blue="0.80000000000000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="70" id="0KA-d7-tGw"/>
-                                    <constraint firstItem="0iK-nP-OYS" firstAttribute="centerX" secondItem="349-nu-WM4" secondAttribute="centerX" id="YrY-OC-GOh"/>
-                                    <constraint firstItem="0iK-nP-OYS" firstAttribute="centerY" secondItem="349-nu-WM4" secondAttribute="centerY" id="mYW-EK-pcJ"/>
-                                    <constraint firstItem="0iK-nP-OYS" firstAttribute="width" secondItem="349-nu-WM4" secondAttribute="width" id="zbQ-zO-o69"/>
-                                </constraints>
-                            </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dhw-z1-DVG">
                                 <rect key="frame" x="270" y="497" width="50" height="50"/>
                                 <constraints>
@@ -60,10 +42,7 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="349-nu-WM4" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="35T-F1-3Hm"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="1TJ-W8-nhD" secondAttribute="trailing" id="6QU-8C-MOZ"/>
-                            <constraint firstItem="349-nu-WM4" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="7kY-D3-KKs"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="349-nu-WM4" secondAttribute="trailing" id="ABj-op-VNP"/>
                             <constraint firstItem="1TJ-W8-nhD" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Qbj-Rs-tYK"/>
                             <constraint firstItem="jNC-2f-kiH" firstAttribute="top" secondItem="1TJ-W8-nhD" secondAttribute="bottom" id="ZNF-qO-zRx"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="dhw-z1-DVG" secondAttribute="trailing" id="ZoO-jY-BMk"/>
@@ -75,17 +54,25 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <navigationItem key="navigationItem" title="Double Tap to Drop A Pin" id="hNo-5W-ahY">
+                        <barButtonItem key="rightBarButtonItem" systemItem="search" id="6eC-h3-dQw">
+                            <connections>
+                                <action selector="searchLocation:" destination="BYZ-38-t0r" id="hCL-kd-Zyo"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="bounceUpView" destination="jNC-2f-kiH" id="epD-RO-ISV"/>
                         <outlet property="bounceUpViewHeightConstraint" destination="jrm-IZ-cvA" id="jTW-uq-w3E"/>
                         <outlet property="bounceUpViewTopConstraint" destination="ZNF-qO-zRx" id="gbO-mC-alQ"/>
                         <outlet property="centerMapBtn" destination="dhw-z1-DVG" id="Clg-F1-tlS"/>
                         <outlet property="mapView" destination="1TJ-W8-nhD" id="PHF-0e-HfO"/>
+                        <outlet property="searchBtn" destination="6eC-h3-dQw" id="cgi-is-yjL"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="136.875" y="133.09859154929578"/>
+            <point key="canvasLocation" x="1134.375" y="133.09859154929578"/>
         </scene>
         <!--PopVC-->
         <scene sceneID="6aA-yV-eLo">
@@ -136,7 +123,25 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TFJ-K5-p9D" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1033.125" y="134.1549295774648"/>
+            <point key="canvasLocation" x="2030.625" y="134.1549295774648"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="kSk-wd-HQW">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Bq5-rR-C4u" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="1IL-gp-3G5">
+                        <rect key="frame" x="0.0" y="20" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="gXa-Ts-PQP"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="GEB-ng-Xvs" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="136.875" y="133.09859154929578"/>
         </scene>
     </scenes>
     <resources>

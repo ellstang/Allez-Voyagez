@@ -1,6 +1,5 @@
 //  ViewController.swift
 //  allezVoyagez
-//
 //  Created by 唐嘉伶 on 2018/6/9.
 //  Copyright © 2018 唐嘉伶. All rights reserved.
 
@@ -10,7 +9,7 @@ import CoreLocation
 import Alamofire
 import AlamofireImage
 
-class MapVC: UIViewController, UIGestureRecognizerDelegate {
+class MapVC: UIViewController, UIGestureRecognizerDelegate, UISearchBarDelegate {
   
   // MARK: - properties
   var locationManager = CLLocationManager()
@@ -34,10 +33,82 @@ class MapVC: UIViewController, UIGestureRecognizerDelegate {
   
   @IBOutlet weak var bounceUpViewTopConstraint: NSLayoutConstraint!
   
-  //@IBOutlet weak var mapViewBottomConstraint: NSLayoutConstraint!
+  @IBOutlet weak var searchBtn: UIBarButtonItem!
+  
+  //rewrite here: add selected location to collection
   @IBAction func centerMap(_ sender: UIButton) {
-    if locationAuthStatus == .authorizedAlways || locationAuthStatus == .authorizedWhenInUse {
+    //print(mapView.annotations.count, mapView.annotations.forEach({$0.coordinate.latitude}))
+    
+      if locationAuthStatus == .authorizedAlways || locationAuthStatus == .authorizedWhenInUse {
       centerMapOnUserLocation()
+    }
+  }
+  
+  @IBAction func searchLocation(_ sender: UIBarButtonItem) {
+    let searchController = UISearchController(searchResultsController: nil)
+    searchController.searchBar.delegate = self
+    self.present(searchController, animated: true, completion: nil)
+    
+  }
+  
+  func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    UIApplication.shared.beginIgnoringInteractionEvents()
+    
+    //show activity indicator
+    let activityIndicator = UIActivityIndicatorView()
+    activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+    activityIndicator.frame.size = CGSize(width: 50, height: 50)
+    activityIndicator.center = self.mapView.center
+    activityIndicator.hidesWhenStopped = true
+    activityIndicator.startAnimating()
+    self.mapView.addSubview(activityIndicator)
+    
+    //hide searchBar
+    searchBar.resignFirstResponder()
+    dismiss(animated: true, completion: nil)
+    
+    //create search request
+    let searchRequest = MKLocalSearchRequest()
+    guard let searchText = searchBar.text , searchText != "" else {
+      return
+    }
+    
+    searchRequest.naturalLanguageQuery = searchText
+    let activeSearch = MKLocalSearch(request: searchRequest)
+    activeSearch.start { (response, err) in
+      activityIndicator.stopAnimating()
+      UIApplication.shared.endIgnoringInteractionEvents()
+      if err != nil {
+        if let errContent = err?.localizedDescription {
+          let alert = UIAlertController(title: "ohoh", message: "\(errContent)", preferredStyle: .alert)
+          let alertAct = UIAlertAction(title: "ok lets try later", style: .default, handler: nil)
+          alert.addAction(alertAct)
+          self.present(alert, animated: true, completion: nil)
+        }
+       
+      } else {
+        //remove annotations
+        let annotations = self.mapView.annotations
+        self.mapView.removeAnnotations(annotations)
+        print(self.mapView.annotations.count)
+        
+        //getting data
+        guard let lat = response?.boundingRegion.center.latitude else { return }
+        guard let long = response?.boundingRegion.center.longitude else { return }
+        print("lat is \(lat), long is \(long)")
+        let annotation = MKPointAnnotation()
+        annotation.title = searchText
+        annotation.coordinate = CLLocationCoordinate2DMake(lat, long)
+        print(annotation)
+        self.mapView.addAnnotation(annotation)
+        
+        //zoom in
+        let coordinate: CLLocationCoordinate2D = CLLocationCoordinate2DMake(lat, long)
+        print(coordinate.latitude, coordinate.longitude)
+        let span = MKCoordinateSpanMake(0.1, 0.1)
+        let region = MKCoordinateRegionMake(coordinate, span)
+        self.mapView.setRegion(region, animated: true)
+      }
     }
   }
   
@@ -103,6 +174,7 @@ extension MapVC: MKMapViewDelegate {
    swipeGestureRecog.direction = .down
     self.bounceUpView.addGestureRecognizer(swipeGestureRecog)
   }
+  
   @objc func animateViewDown() {
     cancelURLSession()
     bounceUpViewHeightConstraint.constant = 0
@@ -117,9 +189,9 @@ extension MapVC: MKMapViewDelegate {
     spinner?.activityIndicatorViewStyle = .whiteLarge
     spinner?.color = #colorLiteral(red: 0.501960814, green: 0.501960814, blue: 0.501960814, alpha: 1)
     spinner?.startAnimating()
-    
     collectionView?.addSubview(spinner!)
   }
+  
   func removeSpinner() {
     if spinner != nil {
       spinner?.removeFromSuperview()
@@ -262,6 +334,7 @@ extension MapVC: CLLocationManagerDelegate {
   func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
     centerMapOnUserLocation()
   }
+  
 }
 
 // methods for collectionView
@@ -291,6 +364,8 @@ extension MapVC: UICollectionViewDelegate, UICollectionViewDataSource {
   }
 }
 
+
+
 extension MapVC: UIViewControllerPreviewingDelegate {
   func previewingContext(_ previewingContext: UIViewControllerPreviewing, viewControllerForLocation location: CGPoint) -> UIViewController? {
     guard let pressedIndexPath = collectionView?.indexPathForItem(at: location), let cell = collectionView?.cellForItem(at: pressedIndexPath) else { return nil }
@@ -307,5 +382,4 @@ extension MapVC: UIViewControllerPreviewingDelegate {
     show(viewControllerToCommit, sender: self)
   }
 
-  
 }
